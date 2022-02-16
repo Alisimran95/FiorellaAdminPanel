@@ -34,7 +34,7 @@
                             <td class="d-flex justify-content-between" >
                                 <a class="btn btn-warning"   asp-controller="BlogItem" asp-action="Update" asp-route-id="@item.Id">Update</a>
                                 <a class="btn btn-info ml-1 mr-1"  asp-controller="BlogItem" asp-action="Details" asp-route-id="@item.Id">Details</a>
-                                <a id="delete-item-btn" class="btn btn-danger" asp-area="AdminPanel" asp-controller="BlogItem" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                                <a id="delete-item-btn" class="btn btn-danger delete-item-btn" asp-area="AdminPanel" asp-controller="BlogItem" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
                             </td>
                         </tr>   
                     }
@@ -45,10 +45,11 @@
     </div>
 </div>
 @section Scripts{
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         $(document).ready(function() {
-            $("#delete-item-btn").click(function(e) {
+            $(".delete-item-btn#delete-item-btn").click(function(e) {
                 e.preventDefault();
                 Swal.fire({
                     title: 'Are you sure?',
