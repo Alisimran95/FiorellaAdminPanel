@@ -1,4 +1,79 @@
 $(document).ready(function () {
+
+    $(document).on("click",
+        "#add-to-basket",
+        function(e) {
+            $.ajax({
+                type: "POST",
+                url: "/Home/AddToBasket?id=" + $(this).attr("data-id"),
+                success: function(res) {
+                    $("#cart-list").append(res);
+                    //reloading headerCartTotols
+                    //$("#basket-count").text($("#cart-list tr").length - 1);
+
+                    //Setting response count and amount to basketCount and basketAmount
+                    var totalAmount = 0;
+
+                    for (var i = 0; i < res.length; i++) {
+                        totalAmount += res[i].price * res[i].count;
+                    }
+                    $("#basket-total-amount").text("CART $(" + totalAmount + ")");
+                    $("#basket-count").text(res.length);
+
+                }
+            });
+        });
+
+    $(document).on("click",
+        "#cart-delete-btn",
+        function() {
+            $.ajax({
+                type: "POST",
+                url: "/Home/Delete?id=" + $(this).attr("data-id"),
+            success: function(res) {
+                $("#cart-list").empty();
+                $("#cart-list").append(res);
+                $("#basket-count").text($("#cart-list tr").length);
+            }
+        });
+});
+
+
+    $(document).on("click",
+        "#increase-btn",
+        function () {
+            $.ajax({
+                type: "POST",
+                url: "/Home/CountIncrease?id=" + $(this).attr("data-id"),
+                success: function (res) {
+                    $("#cart-list").empty();
+                    $("#cart-list").append(res);
+                    $("#basket-count").text($("#cart-list tr").length);
+
+                }
+            });
+        });
+
+
+    $(document).on("click",
+        "#decrease-btn",
+        function () {
+            $.ajax({
+                type: "POST",
+                url: "/Home/CountDecrease?id=" + $(this).attr("data-id"),
+                success: function (res) {
+                    $("#cart-list").empty();
+                    $("#cart-list").append(res);
+                    $("#basket-count").text($("#cart-list tr").length);
+
+                }
+            });
+        });
+
+
+
+
+
     var stop = false;
     var skip = 4;
     $(window).scroll(function () {

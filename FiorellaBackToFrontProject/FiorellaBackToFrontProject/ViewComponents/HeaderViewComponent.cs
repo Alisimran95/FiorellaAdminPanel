@@ -21,23 +21,23 @@ namespace FiorellaBackToFrontProject.ViewComponents
 
         public async Task<IViewComponentResult> InvokeAsync()
         {
-            var count = 0;
+            var TotalCount = 0;
+            double TotalAmount = 0;
+
             var basket = Request.Cookies["basket"];
            
             if (!string.IsNullOrEmpty(basket))
             {
                 var products = JsonConvert.DeserializeObject<List<BasketViewModel>>(basket);
-                count = products.Count;
+                TotalCount = products.Count;
+                foreach (var item in products)
+                {
+                    TotalAmount += item.Price * item.Count;
+                }
             }
-            ViewBag.BasketCount = count;
-            //var products2 = JsonConvert.DeserializeObject<List<BasketViewModel>>(basket);
-            //double totalAmount = 0;
 
-            //foreach (var amount in products2)
-            //{
-            //    totalAmount += amount.Count * amount.Price;
-            //    ViewBag.totalamount = totalAmount;
-            //}
+            ViewBag.BasketCount = TotalCount;
+            ViewBag.TotalAmount = TotalAmount;
 
             var bio = await _dbContext.Bios.SingleOrDefaultAsync();
             return View(bio);

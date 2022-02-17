@@ -30,7 +30,7 @@ namespace FiorellaBackToFrontProject.Controllers
             var sliderImages = _dbContext.SliderImages.ToList();
             var slider = _dbContext.Sliders.SingleOrDefault();
             var categories = _dbContext.Categories.ToList();
-            var products = _dbContext.Products.Include(x=>x.Category).ToList();
+            var products = _dbContext.Products.Include(x=>x.Category).Take(8).ToList();
             var aboutContexts = _dbContext.AboutContexts.Include(x=>x.AboutIcons).ToList();
             var aboutIcons = _dbContext.AboutIcons.ToList();
             var flowerTitle = _dbContext.FlowerTitles.SingleOrDefault();
@@ -81,10 +81,9 @@ namespace FiorellaBackToFrontProject.Controllers
                     Price = product.Price,
                     Count = item.Count,
                     Image = product.Image,
-                    Amount =item.Count*product.Price,
+                    Amount = item.Amount
+                    //Amount =item.Count*product.Price,
                 });
-                totalAmount += item.Count * product.Price;
-                ViewBag.totalamount = totalAmount;
             }
 
             basket = JsonConvert.SerializeObject(newBasket);
@@ -99,14 +98,18 @@ namespace FiorellaBackToFrontProject.Controllers
             var basket = Request.Cookies["basket"];
             var basketViewModels = JsonConvert.DeserializeObject<List<BasketViewModel>>(basket);
             var isExist  = basketViewModels.FirstOrDefault(x=>x.Id == id);
-            if (isExist != null)
+            if (isExist == null)
+            {
+                return NotFound();
+            }
+            else
             {
                 basketViewModels.Remove(isExist);
             }
             var srObject = JsonConvert.SerializeObject(basketViewModels);
             Response.Cookies.Append("basket", srObject);
-            
-            return RedirectToAction(nameof(basket));
+
+            return PartialView("_BasketPartial",basketViewModels);
         }
 
         public IActionResult CountIncrease(int? id)
@@ -122,7 +125,7 @@ namespace FiorellaBackToFrontProject.Controllers
             var srObject = JsonConvert.SerializeObject(basketViewModels);
             Response.Cookies.Append("basket",srObject);
 
-            return RedirectToAction(nameof(basket));
+            return PartialView("_BasketPartial", basketViewModels);
         }
         public IActionResult CountDecrease(int? id)
         {
@@ -141,8 +144,9 @@ namespace FiorellaBackToFrontProject.Controllers
             var srObject = JsonConvert.SerializeObject(basketViewModels);
             Response.Cookies.Append("basket", srObject);
 
-            return RedirectToAction(nameof(basket));
+            return PartialView("_BasketPartial", basketViewModels);
         }
+
 
         public async Task<IActionResult> AddToBasket(int? id)
         {
@@ -175,6 +179,10 @@ namespace FiorellaBackToFrontProject.Controllers
                 existBasketViewModel = new BasketViewModel
                 {
                     Id = product.Id,
+                    Name = product.Name,
+                    Price = product.Price,
+                    Image = product.Image,
+
                 };
                 basketViewModels.Add(existBasketViewModel);
             }
@@ -186,8 +194,7 @@ namespace FiorellaBackToFrontProject.Controllers
             var basket = JsonConvert.SerializeObject(basketViewModels);
             Response.Cookies.Append("basket", basket); ;
 
-            return RedirectToAction(nameof(Index));
-
+            return Json(basketViewModels);
         }
     }
 }
